@@ -4,32 +4,19 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 
-// Загрузка фона
-const exrLoader = new EXRLoader();
-exrLoader.load('./images/autumn_field_4k.exr', (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping; // Установка отображения
-  scene.background = texture; // Задать фон сцены
-  scene.environment = texture; // Освещение от HDRI
-});
+// Сцена
+const scene = new THREE.Scene();
 
 // Отрисовщик
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x000000);
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
-
-// Сцена
-const scene = new THREE.Scene();
 
 // Камера
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
 camera.position.set(0, 3, 20);
 
-// Перемещение
+// OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.enablePan = false;
@@ -41,11 +28,13 @@ controls.autoRotate = false;
 controls.target = new THREE.Vector3(0, 1, 0);
 controls.update();
 
-// Освещение
-const sunLight = new THREE.DirectionalLight(0xffffff, 1); // Цвет и интенсивность
-sunLight.position.set(-50, 100, 50); // Позиция источника света
-sunLight.castShadow = true;
-scene.add(sunLight);
+// Загрузка фона
+const exrLoader = new EXRLoader();
+exrLoader.load('./images/autumn_field_4k.exr', (texture) => {
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = texture;
+  scene.environment = texture; // Освещение 
+});
 
 // Текст
 const loader = new FontLoader();
